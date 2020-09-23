@@ -12,12 +12,12 @@
 #include "ble_tcu_commands.h"
 #include "global_buffer.h"
 #include "const.h"
-//#include "global.h"
+#include "global.h"
 #include "tcu.h"
 #include "trace.h"
 #include "ble_biody_profile_data_cmds.h"
 //#include "delays_sleep.h"
-//#include "version.h"
+#include "version.h"
 
 
 #undef MODULE_NAME

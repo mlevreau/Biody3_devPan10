@@ -23,7 +23,8 @@
 
 #include "stdint.h"
 
-unsigned char TableFrequence[11] = {5,10,20,40,45,50,55,60,100,150,200};
+//not used for marilys test
+//unsigned char TableFrequence[11] = {5,10,20,40,45,50,55,60,100,150,200};
 
 
 //____________________________________________

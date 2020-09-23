@@ -25,7 +25,6 @@
 #include "ble_message_manager.h"
 #include "global_buffer.h"
 
-
 struct uart_ctx *rs_ctx;
 struct uart_ctx *ble_ctx;
 
@@ -64,9 +63,6 @@ void show_data(uint8_t tableau[]){
 	 PRINT(rs_ctx,"\n");
 }
 
-/*
- * Fin modifications
- */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
    ByteReceived++;
 	struct uart_ctx *ctx;
@@ -313,18 +309,10 @@ static void console_process_string(void* context) {
         PRINT(ctx,"COM_initAll: %s\n",(ret==0)?"SUCCESS":"ERROR");
       }
     }else if (strncmp(ctx->console_str,"transfer",3)==0){
-    	/*res = BIOMSGM_manageAssociationRequest(tab, NB_DATA);
-        PRINT(ctx,"res: %d\n",res);
-    	res = BIOMSGM_manageExchangeKeyRequest(tab, NB_DATA);
-        PRINT(ctx,"res: %d\n",res);
-    	res = BIOMSGM_manageTransferKeyRequest(tab, NB_DATA);
-        PRINT(ctx,"res: %d\n",res);
-    	res = BIOMSGM_manageTransferKeyVerifRequest(tab, NB_DATA);
-        PRINT(ctx,"res: %d\n",res);
-    	res = BIOMSGM_manageInformationRequest(tab, NB_DATA);*/
-    	//res = BIOMSGM_manageMeasuresRequest(tab, NB_DATA);
 
-    	res = TransfertMesure();
+    	res = SPPOBLE_manageProfile();
+    	PRINT(ctx,"SPPOBLE_manageProfile: %s\n",(res==0)?"SUCCESS":"ERROR");
+    	/*
     	res=BLEMSM_handleBleMessage();
     	PRINT(ctx,"handleMessage: %s\n",(res==0)?"SUCCESS":"ERROR");
 
@@ -332,7 +320,7 @@ static void console_process_string(void* context) {
     	show_data(messageReceived_buffer);
     	res = BIOMSGM_manageMessage(messageReceived_buffer, BLEMSM_messageReceivedLength);
         PRINT(ctx,"transfer: %s\n",(res==0)?"SUCCESS":"ERROR");
-    	PRINT(ctx,"fini\n");
+    	PRINT(ctx,"fini\n");*/
     } else if (strncmp(ctx->console_str,"data",3)==0){
     	init_data(tab);
         PRINT(rs_ctx,"tab :");
@@ -383,53 +371,3 @@ void uart_service_ms(void) {
   }
 }
 
-unsigned char TransfertMesure(void) {
-
-    int res;
-
-    // **** previous commands
-    //PWRBTOFF;
-    Delaix10ms(20);
-    //FinInitBT = 0;          // useful ?
-    //RESETPAN1026;
-    Nop();
-    //PWRBTON;
-    Delaix10ms(30);         // 300ms RESET BT apres MST
-    //SETPAN1026;
-
-    while (InputMaitre());
-    Delaix10ms(30); // 300ms RESET BT apres reset
-    if (InputMaitreAvecTimeOUT(7, 300) == 0) // attente event reset de module avec 00 00  en data
-        return STATUS_ERROR;
-    // **** end previous commands
-
-    // ******** new commands **************** //
-
-#if DEV_TEST
-        //test with default measures:
-        TableMesureGrandeursZPHI1[M5k][MZ] = 675;
-        TableMesureGrandeursZPHI1[M20k][MZ] = 660;
-        TableMesureGrandeursZPHI1[M50k][MZ] = 608;
-        TableMesureGrandeursZPHI1[M100k][MZ] = 560;
-        TableMesureGrandeursZPHI1[M200k][MZ] = 0x023A;
-
-        TableMesureGrandeursZPHI1[M5k][MPHI] = 59;
-        TableMesureGrandeursZPHI1[M20k][MPHI] = 65;
-        TableMesureGrandeursZPHI1[M50k][MPHI] = 71;
-        TableMesureGrandeursZPHI1[M100k][MPHI] = 81;
-        TableMesureGrandeursZPHI1[M200k][MPHI] = 57;
-#endif
-
-    // start green led blinking ! + sound
-    BUZZ_startWaitingConnectionBeeps();        // slow beeps
-    LED_startBlinkingGreenLed(500);
-
-    res = SPPOBLE_manageProfile(); // create and manage the SPPOBLE profile !
-
-    // stop green led blinking and sound !!!
-    BUZZ_stopBuzzer();
-    LED_stopBlinkingGreenLed();
-    LED_enableGreenLed();
-
-    return res;
-}

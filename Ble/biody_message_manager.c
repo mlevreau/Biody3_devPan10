@@ -13,8 +13,6 @@
 #include "version.h"
 #include "global.h"
 
-#define EXTPUBL extern 
-#include "buffer4.h"
 #include "ble_message_manager.h"
 #include "tcu.h"
 #include "EEP.h"
@@ -25,6 +23,9 @@ enum BIOMSGM_biodyCommunicationState BIOMSGM_biodyCurrentComState = BIOCOM_NONE;
 uint8_t masterCryptKey[4];
 uint8_t exchangeCryptKey[4] = {0x04, 0x03, 0x02, 0x01};
 uint8_t transferCryptKey[4] = {0x01, 0x01, 0x01, 0x01};
+
+// master key
+const uint8_t DEFAULT_MASTER_CRYPT_KEY[4] = {0x3F, 0x28, 0x4C, 0xB7};
 
 uint8_t randomN0[4];
 uint8_t randomN1[4];
@@ -178,6 +179,8 @@ int BIOMSGM_manageInformationRequest(uint8_t *message, uint8_t messageLength){
     uint8_t payloadSize, i;
     uint8_t jammingSize;            //  bytes added by jamming
     uint8_t index, totalSize;
+
+    uint8_t DEVICE_MODEL_NAME[] = {'B', 'I', 'O', 'D', 'Y'};
 
     BIOMSGM_loadPreviousExchangeKey(exchangeCryptKey);
     
@@ -596,8 +599,8 @@ void BIOMSGM_saveMasterKey(uint8_t *key){
     
     uint8_t i;
     // store the master key
-    for (i = 0; i < MASTER_KEY_MEM_SIZE; i++)
-        Write_b_eep(MASTER_KEY_MEM_ADDRESS + i, key[i]);
+    //for (i = 0; i < MASTER_KEY_MEM_SIZE; i++)
+        //Write_b_eep(MASTER_KEY_MEM_ADDRESS + i, key[i]);
 }
 
 void BIOMSGM_manageMasterKey(void){

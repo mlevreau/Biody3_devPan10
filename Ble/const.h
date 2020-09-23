@@ -31,8 +31,8 @@
 
 #define VRAI 1
 #define FAUX 0
-//#define EI	(INTCONbits.GIE = 1)
-//#define DI	(INTCONbits.GIE = 0)
+#define EI 1
+#define DI 0
 #define RET_OK 0
 #define RET_KO 1
 #ifndef NULL
@@ -87,7 +87,7 @@ typedef double             DOUBLE;
 //#define ChargeOFF (PORTDbits.RD5 = 0)
 //#define AnaOFF (PORTDbits.RD0 = 0)
 
-#define PWRBTOFF (PORTAbits.RA7 = 0)
+#define PWRBTOFF 0
 #define PWRBTON (PORTAbits.RA7 = 1)
 
 #define ALimON (PORTBbits.RB5 = 1)

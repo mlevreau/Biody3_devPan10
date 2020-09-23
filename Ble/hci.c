@@ -23,7 +23,7 @@ int HCI_receiveResponse(uint8_t *buf, uint8_t length_expected){
 	uint8_t command_length;
 
 	if (res) {
-		trace_error(MODULE_NAME,"uart_application_receive_receive_bytes() failed: %d\n",res);
+		trace_error(MODULE_NAME,"uart_application_receive_receive_bytes1() failed: %d\n",res);
 		return STATUS_ERROR;
 	}
 
@@ -32,7 +32,7 @@ int HCI_receiveResponse(uint8_t *buf, uint8_t length_expected){
 	
 	res = UART_retrieveBytes(buf + 3, command_length, 300);
 	if (res) {
-		trace_error(MODULE_NAME,"uart_application_receive_receive_bytes() failed: %d\n",res);
+		trace_error(MODULE_NAME,"uart_application_receive_receive_bytes2() failed: %d\n",res);
 	    return STATUS_ERROR;
 	}
 	

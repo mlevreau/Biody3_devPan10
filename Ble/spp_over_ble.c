@@ -13,7 +13,7 @@
 #include "pconfig.h"
 #include "const.h"
 #include "trace.h"
-#include "uart.h" //#include "uart_hal.h"
+#include "uart_hal.h"
 #include "tcu.h"
 #include "global_buffer.h"
 #include "ble_tcu_commands.h"
@@ -25,8 +25,6 @@
 // --- Protocol section ---
 #include "biody_message_manager.h"
 
-#define EXTPUBL extern 
-#include "buffer5.h"
 #include "global.h"
 #include "delays_sleep.h"
 
@@ -50,6 +48,13 @@
 
 enum communicationState currentCommunicationState = COM_NONE;
 
+uint8_t TCU_LE_GATT_SDB_ADD_CHAR_ELE_REQ4[24];
+uint8_t TCU_HCI_WRITE_BD_ADDR_REQ[10];
+uint8_t TCU_MNG_LE_START_ADVERTISE_REQ_ARR[86];
+
+// info of biody type, used to recognized a specific type of Biody before connection
+uint8_t BIODY_SYSTEM_TYPE = 0x01;
+
 int SPPOBLE_handleState(enum communicationState newState){
 
     int res = STATUS_SUCCESS;
@@ -64,36 +69,47 @@ int SPPOBLE_handleState(enum communicationState newState){
 
 	switch(currentCommunicationState){
 		case COM_INIT:   
+	    	PRINT(rs_ctx,"COM_INIT \n");
 			break;
 		case COM_UART_INIT:
+	    	PRINT(rs_ctx,"COM_UART_INIT \n");
 			//UART_init(); done in main.c
 			break;
 		case COM_PROFILE_INIT:
+	    	PRINT(rs_ctx,"COM_PROFILE_INIT \n");
             res = SPPOBLE_initProfile();
 			break;
 		case COM_WAITING_BT_CONNECTION:
+	    	PRINT(rs_ctx,"COM_WAITING_BT_CONNECTION \n");
             res = SPPOBLE_waitForConnection(BLE_CONNECTION_TIMEOUT);   
 			break;
 		case COM_BT_CONNECTED:
+	    	PRINT(rs_ctx,"COM_BT_CONNECTED \n");
 			// disable BLE
 			break;
 		case COM_BLE_CONNECTED:
+	    	PRINT(rs_ctx,"COM_BLE_CONNECTED \n");
             BIOMSGM_manageMasterKey();  // init and check the crypt key 
 			break;
 		case COM_WAITING_EXCHANGE:       
+	    	PRINT(rs_ctx,"COM_WAITING_EXCHANGE \n");
             res = SPPOBLE_waitForExchange(BLE_MESSAGE_RECEPTION_TIMEOUT);      
 			break;
-		case COM_EXCHANGE_IN_PROGRESS:          
+		case COM_EXCHANGE_IN_PROGRESS:
+	    	PRINT(rs_ctx,"COM_EXCHANGE_IN_PROGRESS \n");
             res = SPPOBLE_manageExchanges(BLE_EXCHANGES_TIMEOUT);      
 			break;
 		case COM_EXCHANGE_DONE:
+	    	PRINT(rs_ctx,"COM_EXCHANGE_DONE \n");
 			// call the disconnection (BT or BLE) ?
 			break;
 		case COM_DISCONNECTED:
+	    	PRINT(rs_ctx,"COM_DISCONNECTED \n");
 			// finalize the com process and leave ?
 			break;
 
 		default:
+	    	PRINT(rs_ctx,"Case SPPOBLE_handleState default -> break \n");
 			break;
 	}
     
@@ -115,6 +131,7 @@ int SPPOBLE_initProfile(void){
     int res;
     
     res = COM_initHci();
+	PRINT(rs_ctx,"COM_initHci: %s\n",(res==0)?"SUCCESS":"ERROR");
 	if(res != STATUS_SUCCESS)
 		return res;
     
@@ -141,6 +158,7 @@ int SPPOBLE_createProfile(void){
     int res;
             
     res = SPPOBLE_handleState(COM_PROFILE_INIT);
+	PRINT(rs_ctx,"SPPOBLE_handleState: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS){
         return res;
     }
@@ -149,39 +167,34 @@ int SPPOBLE_createProfile(void){
 
 void SPPOBLE_updateProfileData(void){
 
-	//ligne rajoutée par Marilys L
-	uint8_t TCU_HCI_WRITE_BD_ADDR_REQ[10] = {0x01, 0x13, 0x10, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
     uint8_t i;
     uint8_t* updatePtr;     // pointer for array to update
         
     // ---------------- update the SYSTEM ID info
-    updatePtr = &SYSTEM_ID_CHAR_DATA_START_INDEX;
+    updatePtr = &TCU_LE_GATT_SDB_ADD_CHAR_ELE_REQ4[SYSTEM_ID_CHAR_DATA_START_INDEX];
     // update data
     updatePtr[0] = BIODY_SYSTEM_TYPE;  
     // add the info to SYSTEM_ID charac
-    updatePtr = &SYSTEM_ID_CHAR_DATA_START_INDEX;
+    updatePtr = &TCU_LE_GATT_SDB_ADD_CHAR_ELE_REQ4[SYSTEM_ID_CHAR_DATA_START_INDEX];
     for(i=0; i<SPPOBLE_BD_ADDR_MINIMIZE_LENGTH; i++)
         updatePtr[1+i] = TCU_HCI_WRITE_BD_ADDR_REQ[7-i];
         
     // -------------- update the Adv data 
     // add the custom data after complete local name (BIODY)
-    updatePtr = &ADVERTISEMENT_DATA_CHAR_CUSTOM_DATA_START_INDEX;
+    updatePtr = &TCU_MNG_LE_START_ADVERTISE_REQ_ARR[ADVERTISEMENT_DATA_CHAR_CUSTOM_DATA_START_INDEX];
     updatePtr[0] = 1 + 5;   // 1 = data type + data length
     updatePtr[1] = 0xFF;       // see https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile 
     for(i=0; i<5; i++)
-        updatePtr[2+i] = (&SYSTEM_ID_CHAR_DATA_START_INDEX)[i];
+        updatePtr[2+i] = (&TCU_LE_GATT_SDB_ADD_CHAR_ELE_REQ4[SYSTEM_ID_CHAR_DATA_START_INDEX])[i];
     // update the total length for adv data
-    ADVERTISEMENT_DATA_CHAR_DATA_LENGTH = ADVERTISEMENT_DATA_CHAR_DATA_LENGTH + ADVERTISEMENT_DATA_CHAR_CUSTOM_DATA_START_INDEX + 1; // +1 for data length in adv custom data
+    ADVERTISEMENT_DATA_CHAR_DATA_LENGTH == ADVERTISEMENT_DATA_CHAR_DATA_LENGTH + ADVERTISEMENT_DATA_CHAR_CUSTOM_DATA_START_INDEX + 1; // +1 for data length in adv custom data
 }
 
 int SPPOBLE_waitForConnection(uint8_t timeout){
     int res;
     
-    //DI;
-    TimeOUT2 = 0;        // (step by 10ms) global data by IT
-    //EI;
-    
+    unsigned int volatile TimeOUT2 = 0;
+
     // convert timeout in ms for the comparaison
     while(TimeOUT2*10 < timeout*1000){
         // check if data available !
@@ -202,9 +215,7 @@ int SPPOBLE_waitForConnection(uint8_t timeout){
 int SPPOBLE_waitForExchange(uint8_t timeout){
     int res;
     
-   // DI;
-    TimeOUT2 = 0;        // (step by 10ms) global data by IT
-   // EI;
+    unsigned int volatile TimeOUT2 = 0;
     
     // convert timeout in ms for the comparaison
     while(TimeOUT2*10 < timeout*1000){
@@ -226,9 +237,7 @@ int SPPOBLE_waitForExchange(uint8_t timeout){
 int SPPOBLE_manageExchanges(uint8_t timeout){
     
     int res;
-  //  DI;
-    TimeOUT2 = 0;        // (step by 10ms) global data by IT
-    //EI;
+    unsigned int volatile TimeOUT2 = 0;
     
     // convert timeout in ms for the comparaison
     while(TimeOUT2*10 < timeout*1000){    
@@ -290,6 +299,7 @@ int SPPOBLE_manageProfile(void){
     int res;
     // start by the creation of the profile
     res = SPPOBLE_createProfile();
+	PRINT(rs_ctx,"SPPOBLE_createProfile: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;    
     
@@ -305,9 +315,10 @@ int SPPOBLE_manageProfile(void){
     if(res != STATUS_SUCCESS)
         return res;
     
+    //not used in marilys test
     // change the beeps frequency when first exchange received
-    BUZZ_stopBuzzer();
-    BUZZ_startEchangesInProgressBeeps();
+   // BUZZ_stopBuzzer();
+   // BUZZ_startEchangesInProgressBeeps();
     
     res = SPPOBLE_handleState(COM_EXCHANGE_IN_PROGRESS);
     if(res != STATUS_SUCCESS)
