@@ -24,6 +24,8 @@
 #include "biody_message_manager.h"
 #include "ble_message_manager.h"
 #include "global_buffer.h"
+#include "spp_over_ble.h"
+
 
 struct uart_ctx *rs_ctx;
 struct uart_ctx *ble_ctx;
@@ -75,6 +77,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (ctx) {
 	  if (ctx->RxFull==0) {
 		ctx->rx_buffer[ctx->RxHead] = ctx->RxChar;        //get received character
+		if(ctx==ble_ctx) PRINT(rs_ctx,">0x%x\n", ctx->RxChar);
 		HAL_UART_Receive_IT(huart,&ctx->RxChar,1);      //prepare for next reception
 
 		ctx->RxHead++;
@@ -259,24 +262,26 @@ uint8_t UART_retrieveBytes(uint8_t *bfr,int length, int duration1ms){
   }
 
   if (timer.ppms<ppmm) {
-    int q;
-    for (q=0;q<length;q++){
-      uint8_t c = uart_get_char(ble_ctx);
-      *bfr++ = c;
-    }
+	  int q;
+	   for (q=0;q<length;q++){
+	     uint8_t c = uart_get_char(ble_ctx);
+	     *bfr++ = c;
+	   }
     ret = STATUS_SUCCESS;
   } else {
+	  PRINT(rs_ctx,"exp:%d rec:%d\n",uart_rx_received(ble_ctx),length);
 	ret = STATUS_TIMEOUT;
   }
-  return ret;
+   return ret;
 }
 
 uint8_t UART_sendBytes(uint8_t *bfr,int length) {
   int loop = 0;
   while (loop++ < length) {
 	  while (uart_tx_full(ble_ctx));
-	  uart_put_char(ble_ctx,*(bfr++));
+     uart_put_char(ble_ctx,*(bfr++));
   }
+ // while (uart_tx_pending(ble_ctx)) uart_service_ms();
   return STATUS_SUCCESS;
 }
 //end specific to BLE
@@ -310,17 +315,10 @@ static void console_process_string(void* context) {
       }
     }else if (strncmp(ctx->console_str,"transfer",3)==0){
 
+    	//while (uart_rx_received(ble_ctx)>0) uart_get_char(ble_ctx);
     	res = SPPOBLE_manageProfile();
     	PRINT(ctx,"SPPOBLE_manageProfile: %s\n",(res==0)?"SUCCESS":"ERROR");
-    	/*
-    	res=BLEMSM_handleBleMessage();
-    	PRINT(ctx,"handleMessage: %s\n",(res==0)?"SUCCESS":"ERROR");
 
-    	PRINT(ctx,"messageReceived_buffer: ");
-    	show_data(messageReceived_buffer);
-    	res = BIOMSGM_manageMessage(messageReceived_buffer, BLEMSM_messageReceivedLength);
-        PRINT(ctx,"transfer: %s\n",(res==0)?"SUCCESS":"ERROR");
-    	PRINT(ctx,"fini\n");*/
     } else if (strncmp(ctx->console_str,"data",3)==0){
     	init_data(tab);
         PRINT(rs_ctx,"tab :");
