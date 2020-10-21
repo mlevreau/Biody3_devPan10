@@ -30,7 +30,7 @@ int BLEMSM_handleBleMessage(void){
     
     // retrieve the message via TCU protocol
     res = TCU_receiveResponse(reception_buffer, 0);
-    //PRINT(rs_ctx,"(handleMessage)TCU_receiveResponse: %s\n",(res==0)?"SUCCESS":"ERROR");
+    PRINT(rs_ctx,"(handleMessage)TCU_receiveResponse: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     
@@ -145,7 +145,7 @@ int BLEMSM_manageLeServiceGattServer(void){
     
     switch(GET_OP_CODE){
         case TCU_LE_GATT_SER_WRITE_CHAR_VAL_EVENT:      // write
-        	PRINT(rs_ctx,"TCU_LE_GATT_SER_WRITE_CHAR_VAL_EVENT\n");
+        	//PRINT(rs_ctx,"TCU_LE_GATT_SER_WRITE_CHAR_VAL_EVENT\n");
             return BLEMSM_manageLeGattServerWriteCharValueEvent();
         case TCU_LE_GATT_SER_READ_CHAR_VAL_EVENT:
         	//PRINT(rs_ctx,"TCU_LE_GATT_SER_READ_CHAR_VAL_EVENT\n");

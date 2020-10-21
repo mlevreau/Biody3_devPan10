@@ -251,6 +251,7 @@ int SPPOBLE_manageExchanges(uint8_t timeout){
             return STATUS_SUCCESS;
         if(res == STATUS_SUCCESS){
             res = BLEMSM_handleBleMessage();
+            PRINT(rs_ctx,"(manageExchanges)BLEMSM_handleBleMessage: %s\n",(res==0)?"SUCCESS":"ERROR");
             if(res != STATUS_SUCCESS)
                 return res;
         }   

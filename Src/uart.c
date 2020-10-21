@@ -316,7 +316,7 @@ static void console_process_string(void* context) {
       }
     }else if (strncmp(ctx->console_str,"transfer",3)==0){
 
-    	while (uart_rx_received(ble_ctx)>0) uart_get_char(ble_ctx);
+    	 while (uart_rx_received(ble_ctx)>0) uart_get_char(ble_ctx);
     	res = SPPOBLE_manageProfile();
     	PRINT(ctx,"SPPOBLE_manageProfile: %s\n",(res==0)?"SUCCESS":"ERROR");
 
