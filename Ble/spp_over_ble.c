@@ -65,7 +65,7 @@ int SPPOBLE_handleState(enum communicationState newState){
     // apply the new state at the current
     currentCommunicationState = newState;
 	
-    trace_info(MODULE_NAME, "current state %d / new state %d", currentCommunicationState, newState);
+    trace_info(MODULE_NAME, "( handleState ) current state %d / new state %d", currentCommunicationState, newState);
 
 	switch(currentCommunicationState){
 		case COM_INIT:   
@@ -131,7 +131,7 @@ int SPPOBLE_initProfile(void){
     int res;
     
     res = COM_initHci();
-	PRINT(rs_ctx,"COM_initHci: %s\n",(res==0)?"SUCCESS":"ERROR");
+	PRINT(rs_ctx,"(initProfile) COM_initHci: %s\n",(res==0)?"SUCCESS":"ERROR");
 	if(res != STATUS_SUCCESS)
 		return res;
     
@@ -198,7 +198,9 @@ int SPPOBLE_waitForConnection(uint8_t timeout){
     // convert timeout in ms for the comparaison
     while(TimeOUT2*10 < timeout*1000){
         // check if data available !
-        res = UART_checkDataAvailable(200);                 // if data available, test if it's a connection request !!
+        res = UART_checkDataAvailable(200);
+       // PRINT(rs_ctx,"(waitConnection)UART_checkDataAvailable: %s\n",(res==0)?"SUCCESS":"ERROR");
+        // if data available, test if it's a connection request !!
         if(res == STATUS_SUCCESS){
             res = BLEMSM_handleBleMessage();
             if(res != STATUS_SUCCESS)
@@ -304,14 +306,17 @@ int SPPOBLE_manageProfile(void){
         return res;    
     
     res = SPPOBLE_handleState(COM_WAITING_BT_CONNECTION);
+	PRINT(rs_ctx,"COM_WAITING_BT_CONNECTION: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     
     res = SPPOBLE_handleState(COM_BLE_CONNECTED);
+	PRINT(rs_ctx,"COM_WAITING_BT_CONNECTION: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     
     res = SPPOBLE_handleState(COM_WAITING_EXCHANGE);
+	PRINT(rs_ctx,"COM_WAITING_EXCHANGE: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     
@@ -321,14 +326,17 @@ int SPPOBLE_manageProfile(void){
    // BUZZ_startEchangesInProgressBeeps();
     
     res = SPPOBLE_handleState(COM_EXCHANGE_IN_PROGRESS);
+	PRINT(rs_ctx,"COM_EXCHANGE_IN_PROGRESS: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     
     res = SPPOBLE_handleState(COM_EXCHANGE_DONE);
+	PRINT(rs_ctx,"COM_EXCHANGE_DONE: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     
     res = SPPOBLE_handleState(COM_DISCONNECTED);
+	PRINT(rs_ctx,"COM_DISCONNECTED: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     

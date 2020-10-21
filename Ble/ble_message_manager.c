@@ -30,12 +30,13 @@ int BLEMSM_handleBleMessage(void){
     
     // retrieve the message via TCU protocol
     res = TCU_receiveResponse(reception_buffer, 0);
+    //PRINT(rs_ctx,"(handleMessage)TCU_receiveResponse: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     
     // get service id
     serviceId = GET_SERVICE_ID;
-    PRINT(rs_ctx,"serviceId: %d\n",serviceId);
+   // PRINT(rs_ctx,"serviceId: %d\n",serviceId);
     
     // switch for service id
     switch (serviceId) {
@@ -96,6 +97,7 @@ int BLEMSM_manageLeConnectionCompleteEvent(void){
     BLEMSM_connectionHandle[0] = reception_buffer[8];
     BLEMSM_connectionHandle[1] = reception_buffer[9];
    //Role = reception_buffer[10];
+    //show_data(BLEMSM_connectionHandle);
 
     
     // store the peer address of the device (phone etc...)
@@ -143,11 +145,14 @@ int BLEMSM_manageLeServiceGattServer(void){
     
     switch(GET_OP_CODE){
         case TCU_LE_GATT_SER_WRITE_CHAR_VAL_EVENT:      // write
+        	PRINT(rs_ctx,"TCU_LE_GATT_SER_WRITE_CHAR_VAL_EVENT\n");
             return BLEMSM_manageLeGattServerWriteCharValueEvent();
         case TCU_LE_GATT_SER_READ_CHAR_VAL_EVENT:
-            //return BLEMSM_manageLeGattServerReadCharValueEvent();
+        	//PRINT(rs_ctx,"TCU_LE_GATT_SER_READ_CHAR_VAL_EVENT\n");
+         //   return BLEMSM_manageLeGattServerReadCharValueEvent();
         case TCU_LE_GATT_SDB_UPD_CHAR_ELE_RESP:
-            //return BLEMSM_manageLeGattSdbUpdateCharEleResponse();
+        //	PRINT(rs_ctx,"TCU_LE_GATT_SDB_UPD_CHAR_ELE_RESP\n");
+        //    return BLEMSM_manageLeGattSdbUpdateCharEleResponse();
         case TCU_LE_GATT_SER_WRITE_CHAR_VAL_ACCEPT_RESP:
         case TCU_LE_GATT_SER_WRITE_CHAR_DESP_ACCEPT_RESP:
         case TCU_LE_GATT_SER_CHAR_VAL_INDICATION_EVENT:
@@ -155,14 +160,19 @@ int BLEMSM_manageLeServiceGattServer(void){
         case TCU_LE_GATT_SER_READ_CHAR_VAL_ACCEPT_RESP:
         case TCU_LE_GATT_SER_READ_CHAR_DESP_ACCEPT_RESP:        // see if response needed !!
         case TCU_LE_GATT_SER_READ_MULTIPLE_ACCEPT_RESP:
-           //  return BLEMSM_manageLeGattServerWriteCharValAcceptResp();
+        //	PRINT(rs_ctx,"TCU_LE_GATT_SER_READ_MULTIPLE_ACCEPT_RESP\n");
+         //   return BLEMSM_manageLeGattServerWriteCharValAcceptResp();
         case TCU_LE_GATT_SER_WRITE_CHAR_DESP_EVENT:
-           // return BLEMSM_manageLeGattServerWriteCharDespEvent();
+        //	PRINT(rs_ctx,"TCU_LE_GATT_SER_WRITE_CHAR_DESP_EVENT\n");
+          //  return BLEMSM_manageLeGattServerWriteCharDespEvent();
         case TCU_LE_GATT_SER_EXG_MTU_EVENT:
+        //	PRINT(rs_ctx,"TCU_LE_GATT_SER_EXG_MTU_EVENT\n");
            // return BLEMSM_manageLeGattServerExgMtuEvent();
         case TCU_LE_GATT_SER_READ_MULTIPLE_EVENT:   // to see if correct
+        //	PRINT(rs_ctx,"TCU_LE_GATT_SER_READ_MULTIPLE_EVENT\n");
            // return BLEMSM_manageLeGattServerReadMultipleEvent();
         case TCU_LE_GATT_SER_READ_CHAR_DESP_EVENT:
+       // 	PRINT(rs_ctx,"TCU_LE_GATT_SER_READ_CHAR_DESP_EVENT\n");
            // return BLEMSM_manageLeGattServerReadCharDespEvent();
         default:
             return STATUS_SUCCESS;       
