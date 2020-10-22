@@ -243,17 +243,22 @@ int SPPOBLE_manageExchanges(uint8_t timeout){
     
     // convert timeout in ms for the comparaison
     while(TimeOUT2*10 < timeout*1000){    
-        
+
         // check if data available !
-        res = UART_checkDataAvailable(100);     
+        res = UART_checkDataAvailable(100);
+        PRINT(rs_ctx,"(manageExchanges)UART_checkDataAvailable: %s\n",(res==0)?"SUCCESS":"ERROR");
         // If end of exchanges, 
-        if(BIOMSGM_END_OF_EXCHANGES)
+        if(BIOMSGM_END_OF_EXCHANGES){
+            PRINT(rs_ctx,"(manageExchanges)BIOMSGM_END_OF_EXCHANGES\n");
             return STATUS_SUCCESS;
+        }
         if(res == STATUS_SUCCESS){
+            PRINT(rs_ctx,"(manageExchanges)res == STATUS_SUCCESS\n");
             res = BLEMSM_handleBleMessage();
             PRINT(rs_ctx,"(manageExchanges)BLEMSM_handleBleMessage: %s\n",(res==0)?"SUCCESS":"ERROR");
-            if(res != STATUS_SUCCESS)
+            if(res != STATUS_SUCCESS){
                 return res;
+            }
         }   
         // manage the messages
         else if(res == STATUS_TIMEOUT){
@@ -270,7 +275,7 @@ int SPPOBLE_manageExchanges(uint8_t timeout){
                     SPPOBLE_manageCommunicationError(res);
                 }
             }
-        }  
+        }
     }
     return STATUS_TIMEOUT;
 }

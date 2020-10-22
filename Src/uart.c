@@ -272,6 +272,7 @@ uint8_t UART_retrieveBytes(uint8_t *bfr,int length, int duration1ms){
 	  PRINT(rs_ctx,"exp:%d rec:%d\n",uart_rx_received(ble_ctx),length);
 	ret = STATUS_TIMEOUT;
   }
+  PRINT(rs_ctx,"(UART_retrieveBytes)ret = %s\n",(ret==0)?"SUCCESS":"ERROR");
    return ret;
 }
 
@@ -282,7 +283,7 @@ uint8_t UART_sendBytes(uint8_t *bfr,int length) {
      uart_put_char(ble_ctx,*(bfr++));
      //PRINT(rs_ctx, "<0x%x\n",*(bfr++));
   }
-//  while (uart_tx_pending(ble_ctx)) uart_service_ms();
+  //while (uart_tx_pending(ble_ctx)) uart_service_ms();
   return STATUS_SUCCESS;
 }
 //end specific to BLE
@@ -316,7 +317,7 @@ static void console_process_string(void* context) {
       }
     }else if (strncmp(ctx->console_str,"transfer",3)==0){
 
-    	 while (uart_rx_received(ble_ctx)>0) uart_get_char(ble_ctx);
+    	while (uart_rx_received(ble_ctx)>0) uart_get_char(ble_ctx);
     	res = SPPOBLE_manageProfile();
     	PRINT(ctx,"SPPOBLE_manageProfile: %s\n",(res==0)?"SUCCESS":"ERROR");
 
