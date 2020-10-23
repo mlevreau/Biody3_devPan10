@@ -242,7 +242,7 @@ int SPPOBLE_manageExchanges(uint8_t timeout){
     unsigned int volatile TimeOUT2 = 0;
     
     // convert timeout in ms for the comparaison
-    while(TimeOUT2*10 < timeout*1000){    
+    while(TimeOUT2*10 < timeout*1000){
 
         // check if data available !
         res = UART_checkDataAvailable(100);
@@ -259,19 +259,37 @@ int SPPOBLE_manageExchanges(uint8_t timeout){
             if(res != STATUS_SUCCESS){
                 return res;
             }
+           // res = STATUS_TIMEOUT;
         }   
         // manage the messages
         else if(res == STATUS_TIMEOUT){
+            PRINT(rs_ctx,"(manageExchanges)If TIMEOUT\n");
             // manage the previous message packets if needed
-            if(BLEMSM_previousMessagePacketToSend){
+           if(BLEMSM_previousMessagePacketToSend){
+                PRINT(rs_ctx,"(manageExchanges)BLEMSM_previousMessagePacketToSend\n");
                 res = SPPOBLE_managePreviousMessagePacketToSend(messageRemainingTosend_buffer, BLEMSM_previousMessagePacketToSendLength);
             }
             // or manage a received message 
             else if (BLEMSM_messageReceived){
+                PRINT(rs_ctx,"(manageExchanges)BLEMSM_messageReceived\n");
+            messageReceived_buffer [0] =	TableMesureGrandeursZPHI1[M5k][MZ];
+            messageReceived_buffer [1] =    TableMesureGrandeursZPHI1[M20k][MZ];
+            messageReceived_buffer [2] =	TableMesureGrandeursZPHI1[M50k][MZ];
+            messageReceived_buffer [3] =	TableMesureGrandeursZPHI1[M100k][MZ];
+            messageReceived_buffer [4] =	TableMesureGrandeursZPHI1[M200k][MZ];
+
+            messageReceived_buffer [5] =	TableMesureGrandeursZPHI1[M5k][MPHI];
+            messageReceived_buffer [6] =	TableMesureGrandeursZPHI1[M20k][MPHI];
+            messageReceived_buffer [7] =	TableMesureGrandeursZPHI1[M50k][MPHI];
+            messageReceived_buffer [8] =	TableMesureGrandeursZPHI1[M100k][MPHI];
+            messageReceived_buffer [9] =	TableMesureGrandeursZPHI1[M200k][MPHI];
+
+        	PRINT(rs_ctx,"BLEMSM_messageReceivedLength: %d\n",BLEMSM_messageReceivedLength);
                 res = SPPOBLE_manageMessage(messageReceived_buffer, BLEMSM_messageReceivedLength);
 
                 // Manage all errors cases
                 if (res != STATUS_SUCCESS){
+                    PRINT(rs_ctx,"(manageExchanges)res != STATUS_SUCCESS\n");
                     SPPOBLE_manageCommunicationError(res);
                 }
             }
@@ -285,7 +303,8 @@ int SPPOBLE_manageMessage(uint8_t *message, uint8_t messageLength){
     // clear data and flag
     BLEMSM_messageReceived = 0;
     BLEMSM_messageReceivedLength = 0;
-    
+
+	PRINT(rs_ctx,"messageLength: %d\n",messageLength);
     return BIOMSGM_manageMessage(message, messageLength);
     
 }

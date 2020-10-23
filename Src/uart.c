@@ -120,6 +120,8 @@ struct uart_ctx* uart_init(UART_HandleTypeDef *huart, uint32_t rx_size, uint32_t
 	context->console_ptr = 0;
 	context->console_str = malloc(CONSOLE_CMD_LENGTH);
 
+    NbCarReception1 = 0;
+
 	HAL_UART_Receive_IT(huart,&context->RxChar,1);
 
 	return (context);
@@ -283,7 +285,7 @@ uint8_t UART_sendBytes(uint8_t *bfr,int length) {
      uart_put_char(ble_ctx,*(bfr++));
      //PRINT(rs_ctx, "<0x%x\n",*(bfr++));
   }
-  //while (uart_tx_pending(ble_ctx)) uart_service_ms();
+  while (uart_tx_pending(ble_ctx)) uart_service_ms();
   return STATUS_SUCCESS;
 }
 //end specific to BLE
@@ -316,6 +318,18 @@ static void console_process_string(void* context) {
         PRINT(ctx,"COM_initAll: %s\n",(ret==0)?"SUCCESS":"ERROR");
       }
     }else if (strncmp(ctx->console_str,"transfer",3)==0){
+
+    	TableMesureGrandeursZPHI1[M5k][MZ] = 675;
+    	TableMesureGrandeursZPHI1[M20k][MZ] = 660;
+    	TableMesureGrandeursZPHI1[M50k][MZ] = 608;
+    	TableMesureGrandeursZPHI1[M100k][MZ] = 560;
+    	TableMesureGrandeursZPHI1[M200k][MZ] = 0x023A;
+
+    	TableMesureGrandeursZPHI1[M5k][MPHI] = 59;
+    	TableMesureGrandeursZPHI1[M20k][MPHI] = 65;
+    	TableMesureGrandeursZPHI1[M50k][MPHI] = 71;
+    	TableMesureGrandeursZPHI1[M100k][MPHI] = 81;
+    	TableMesureGrandeursZPHI1[M200k][MPHI] = 57;
 
     	while (uart_rx_received(ble_ctx)>0) uart_get_char(ble_ctx);
     	res = SPPOBLE_manageProfile();

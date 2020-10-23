@@ -41,7 +41,6 @@ int BIOMSGM_manageMessage(uint8_t *message, uint8_t messageLength){
     // check if correct biody message
     res = BIOMSGM_isValidBiodyMessage(message, messageLength);
 
-	PRINT(rs_ctx,"res = %d \n", res);
     if(res != STATUS_SUCCESS){
     	PRINT(rs_ctx,"message non valide\n");
        return res;

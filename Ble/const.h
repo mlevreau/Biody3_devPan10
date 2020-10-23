@@ -141,6 +141,7 @@ typedef double             DOUBLE;
 #define TAILLEBUFFEREMISSION 255 
 
 
+
 enum  {TSU=0,US2A,KAV,RF,DEPRESSO,BIOLIGHT,IBU232=10,BT,USB};
 
 #define NBMESURE 32 // doit etre paire !
@@ -165,6 +166,10 @@ enum {BIO= 0,SEG,MED};
 // pour TableMesureReglageZmaxZminVO [Mxk,MxR]
 enum {M5k= 0,M10k,M20k,M40k,M45k,M50k,M55k,M60k,M100k,M150k,M200k}; // NE PAS CHANGER !!!!
 #define DERNIEREFREQUENCE M200k
+
+int TableMesureGrandeursZPHI1[DERNIEREFREQUENCE+1][2];
+unsigned char NbCarReception1;
+unsigned int volatile TimeOUT;
 
 enum {MZMAXR= 0,MPHIZEROR,MVOR,MZMINR};
 enum {SEGMENTBD = 0,SEGMENTBG,SEGMENTJD,SEGMENTJG,SEGMENTTRONC,SEGMENTDIAGD,SEGMENTDIAGG,PASDESEGMENT};
