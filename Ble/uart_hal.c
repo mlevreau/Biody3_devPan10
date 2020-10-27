@@ -9,17 +9,13 @@
 #include "global_buffer.h"
 
 int UART_checkDataAvailable(uint16_t timeout){
+  int ppm = timer.ppms+timeout;
+  while ((timer.ppms<ppm) && uart_tx_empty(rs_ctx));
 
-	/*uart_tx_empty(rs_ctx);
-		return 0;*/
+  return (uart_tx_empty(rs_ctx)?STATUS_TIMEOUT:STATUS_SUCCESS);
 
-    while (TimeOUT*10 < timeout){
-        if(NbCarReception1){
-            return STATUS_SUCCESS;
-        }
-    }
-	return STATUS_TIMEOUT;
 }
+
 
 int UART_isDataToSendWaiting(){
 	int res;

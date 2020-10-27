@@ -548,10 +548,6 @@ int BIOMSGM_isValidBiodyMessage(uint8_t *message, uint8_t messageLength){
 
 int BIOMSGM_sendMessage(uint8_t *message, uint8_t messageSize){
 
-	  PRINT(rs_ctx,"message dans sendMessage:\n");
-	  show_data(message);
-	  PRINT(rs_ctx,"messageSize: %d\n", messageSize);
-
     return BLEMSM_manageLeGattServerCharValIndicationReq(message, messageSize);
 }
 
@@ -596,7 +592,7 @@ void BIOMSGM_loadMasterKey(uint8_t *destKey){
 
 void BIOMSGM_saveMasterKey(uint8_t *key){
     
-    uint8_t i;
+    //uint8_t i;
     // store the master key
     //for (i = 0; i < MASTER_KEY_MEM_SIZE; i++)
         //Write_b_eep(MASTER_KEY_MEM_ADDRESS + i, key[i]);

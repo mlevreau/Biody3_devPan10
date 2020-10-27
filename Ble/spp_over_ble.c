@@ -240,7 +240,6 @@ int SPPOBLE_manageExchanges(uint8_t timeout){
     
     int res;
     unsigned int volatile TimeOUT2 = 0;
-    
     // convert timeout in ms for the comparaison
     while(TimeOUT2*10 < timeout*1000){
 
