@@ -273,17 +273,6 @@ int SPPOBLE_manageExchanges(uint8_t timeout){
             // or manage a received message 
             else if (BLEMSM_messageReceived){
                 PRINT(rs_ctx,"(manageExchanges)BLEMSM_messageReceived\n");
-            messageReceived_buffer [0] =	TableMesureGrandeursZPHI1[M5k][MZ];
-            messageReceived_buffer [1] =    TableMesureGrandeursZPHI1[M20k][MZ];
-            messageReceived_buffer [2] =	TableMesureGrandeursZPHI1[M50k][MZ];
-            messageReceived_buffer [3] =	TableMesureGrandeursZPHI1[M100k][MZ];
-            messageReceived_buffer [4] =	TableMesureGrandeursZPHI1[M200k][MZ];
-
-            messageReceived_buffer [5] =	TableMesureGrandeursZPHI1[M5k][MPHI];
-            messageReceived_buffer [6] =	TableMesureGrandeursZPHI1[M20k][MPHI];
-            messageReceived_buffer [7] =	TableMesureGrandeursZPHI1[M50k][MPHI];
-            messageReceived_buffer [8] =	TableMesureGrandeursZPHI1[M100k][MPHI];
-            messageReceived_buffer [9] =	TableMesureGrandeursZPHI1[M200k][MPHI];
 
         	PRINT(rs_ctx,"BLEMSM_messageReceivedLength: %d\n",BLEMSM_messageReceivedLength);
                 res = SPPOBLE_manageMessage(messageReceived_buffer, BLEMSM_messageReceivedLength);
@@ -337,7 +326,7 @@ int SPPOBLE_manageProfile(void){
         return res;
     
     res = SPPOBLE_handleState(COM_BLE_CONNECTED);
-	PRINT(rs_ctx,"COM_WAITING_BT_CONNECTION: %s\n",(res==0)?"SUCCESS":"ERROR");
+	PRINT(rs_ctx,"COM_BLE_CONNECTED: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     

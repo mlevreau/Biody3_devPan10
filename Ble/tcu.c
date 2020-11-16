@@ -68,8 +68,5 @@ int TCU_sendResponse(uint8_t *destBuf, uint8_t *buf, uint16_t bufSize, uint8_t s
     }
 
     // send the buffer
-    PRINT(rs_ctx,"destbuf:\n");
-        show_data(destBuf);
-
     return UART_sendBytes(destBuf, totalLength);
 }
