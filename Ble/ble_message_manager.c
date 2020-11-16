@@ -405,10 +405,6 @@ int BLEMSM_manageLeGattServerCharValIndicationReq(uint8_t *message, uint8_t mess
     for(i=0; i<messageLength; i++){
         assembling_buffer[4+i] = message[i];
     }
-    PRINT(rs_ctx,"assembling_buffer:\n");
-    show_data(assembling_buffer);
-
-    PRINT(rs_ctx,"sending_buffer: %d \n", sending_buffer);
 
     return TCU_sendResponse(sending_buffer, assembling_buffer, 4+messageLength, TCU_LE_SERVICE_GATT_SRV, TCU_LE_GATT_SER_CHAR_VAL_INDICATION_REQ);
 }

@@ -51,49 +51,40 @@ int BIOMSGM_manageMessage(uint8_t *message, uint8_t messageLength){
     
     switch(GET_CMD(message)){
         case BIOCMD_ASSOCIATION_REQ:
-        	PRINT(rs_ctx,"1");
             if(BIOMSGM_biodyCurrentComState >= BIOCOM_ASSOCIATED)
                 return BIOSTATUS_PROCESS_ERROR;
             res = BIOMSGM_manageAssociationRequest(message, messageLength);
             break;
         case BIOCMD_EXCHANGE_KEY_REQ:
-        	PRINT(rs_ctx,"2");
             res = BIOMSGM_manageExchangeKeyRequest(message, messageLength);
             biodyNewStateTemp = BIOCOM_ASSOCIATED;
             break;
         case BIOCMD_TRANSFER_KEY_REQ:
-        	PRINT(rs_ctx,"3");
             res = BIOMSGM_manageTransferKeyRequest(message, messageLength);
             break;
         case BIOCMD_TRANSFER_KEY_VERIF_REQ:
-        	PRINT(rs_ctx,"4");
             res = BIOMSGM_manageTransferKeyVerifRequest(message, messageLength);
             biodyNewStateTemp = BIOCOM_TRANSFER_KEY_CREATED;
             break;
         case BIOCMD_MEASURES_REQ:
-        	PRINT(rs_ctx,"5");
             if(BIOMSGM_biodyCurrentComState < BIOCOM_TRANSFER_KEY_CREATED) // if no transfer key created, do not manage request yet !
                 return BIOSTATUS_PROCESS_ERROR;
             res = BIOMSGM_manageMeasuresRequest(message, messageLength);
             biodyNewStateTemp = BIOCOM_MEASURES_SEND;
             break;
         case BIOCMD_MEASURES_ACKN:
-        	PRINT(rs_ctx,"6");
             if(BIOMSGM_biodyCurrentComState < BIOCOM_MEASURES_SEND)
                 return BIOSTATUS_PROCESS_ERROR;
             res = BIOMSGM_manageMeasuresAcknowledgement();
             biodyNewStateTemp = BIOCOM_END_OF_EXCHANGES;
             break;
         case BIOCMD_INFO_REQ:
-        	PRINT(rs_ctx,"7");
             res = BIOMSGM_manageInformationRequest(message, messageLength);
             break;
         case BIOCMD_DEV_INFO_REQ:
-        	PRINT(rs_ctx,"8");
             res = BIOMSGM_manageBuildInformationRequest(message, messageLength);
             break;
         default:
-        	PRINT(rs_ctx,"9\n");
             return BIOSTATUS_FRAME_ERROR;
             break;
     }

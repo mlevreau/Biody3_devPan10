@@ -51,9 +51,6 @@ int TCU_sendResponse(uint8_t *destBuf, uint8_t *buf, uint16_t bufSize, uint8_t s
     uint8_t i;
     uint8_t totalLength = TCU_HEADER_LENGTH + SERVICE_ID_SIZE + OP_CODE_SIZE + PARAM_LENGTH_SIZE + bufSize; 
 
-    PRINT(rs_ctx,"buf = a assembling_buffer:\n");
-        show_data(buf);
-
      // prepare the response with mandatory elements
     destBuf[0] = totalLength;
     destBuf[1] = 0;
