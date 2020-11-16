@@ -11,7 +11,7 @@
 int UART_checkDataAvailable(uint16_t timeout){
   int ppm = timer.ppms+timeout*UART_MS_TIME_RATIO;
   while ((timer.ppms<ppm)) {
-	  if(!uart_rx_empty(rs_ctx)) {
+	  if(!uart_rx_empty(ble_ctx)) {
 		  return STATUS_SUCCESS;
 	  }
   }
@@ -23,7 +23,7 @@ int UART_checkDataAvailable(uint16_t timeout){
 int UART_isDataToSendWaiting(){
 	int res;
 
-	res = uart_tx_pending(rs_ctx);
+	res = uart_tx_pending(ble_ctx);
 
 
 	return res;
