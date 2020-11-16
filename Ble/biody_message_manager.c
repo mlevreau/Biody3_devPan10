@@ -585,9 +585,10 @@ void BIOMSGM_createTransferCryptKey(uint8_t *na, uint8_t *nb, uint8_t *destKey){
 
 void BIOMSGM_loadMasterKey(uint8_t *destKey){
     
-   //uint8_t i;
-    //for(i=0; i<MASTER_KEY_MEM_SIZE; i++)
-       // destKey[i] = Read_b_eep(MASTER_KEY_MEM_ADDRESS + i);
+   uint8_t i;
+   for(i=0; i<MASTER_KEY_MEM_SIZE; i++){
+	   destKey[i] = DEFAULT_MASTER_CRYPT_KEY[i];
+   }
 }
 
 void BIOMSGM_saveMasterKey(uint8_t *key){
