@@ -18,7 +18,7 @@
 
 // multiplicateur par rapport au vrai nb de ms
 // timer.ppmm = nb_ms* UART_MS_TIME_RATIO
-#define UART_MS_TIME_RATIO 30
+#define UART_MS_TIME_RATIO 5
 
 #define PRINT(ctx, ... )					\
 do { char msg [300]; 					\
