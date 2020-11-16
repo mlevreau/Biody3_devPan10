@@ -295,52 +295,45 @@ int BIOMSGM_manageMeasuresRequest(uint8_t *message, uint8_t messageLength){
     uint16_t calculatedCrc;
     uint8_t payloadSize;
     uint8_t jammingSize, totalSize;
-    uint8_t tab[7];
 
-    PRINT(rs_ctx,"tab:\n");
-    show_data(tab);
     // CRC Ok, prepare and send the response 'r'
     messageRemainingTosend_buffer[0] = BIOCMD_MEASURES_RESP;       // cmd, directly in the sending buffer
-
-    PRINT(rs_ctx,"messageRemainingTosend_buffer:\n");
-      show_data(messageRemainingTosend_buffer);
     
       // add the battery info + measures
-    assembling_buffer[0] = tab[0];
+        assembling_buffer[0] = NiveauVBAT;
 
-    // measures
-    //assembling_buffer[1] = (0x00 | TableMesureGrandeursZPHI1[M5k][MZ]>>8);
-    assembling_buffer[1] = tab[1];
-   // assembling_buffer[3] = (0x10 | TableMesureGrandeursZPHI1[M5k][MPHI]>>8);
-    assembling_buffer[3] = tab[2];
-    
-    //assembling_buffer[5] = (0x00 | TableMesureGrandeursZPHI1[M20k][MZ]>>8);
-    assembling_buffer[5] = tab[3];
-   // assembling_buffer[7] = (0x10 | TableMesureGrandeursZPHI1[M20k][MPHI]>>8);
-    assembling_buffer[7] = tab[4];
-    
-   // assembling_buffer[9] = (0x00 | TableMesureGrandeursZPHI1[M50k][MZ]>>8);
-    assembling_buffer[9] = tab[5];
-   // assembling_buffer[11] = (0x10 | TableMesureGrandeursZPHI1[M50k][MPHI]>>8);
-    assembling_buffer[11] = tab[6];
-    
-  //  assembling_buffer[13] = (0x00 | TableMesureGrandeursZPHI1[M100k][MZ]>>8);
-    assembling_buffer[13] = tab[7];
-   // assembling_buffer[15] = (0x10 | TableMesureGrandeursZPHI1[M100k][MPHI]>>8);
-    assembling_buffer[15] = tab[8];
-    
-   // assembling_buffer[17] = (0x00 | TableMesureGrandeursZPHI1[M200k][MZ]>>8);
-    assembling_buffer[17] = tab[9];
-   // assembling_buffer[19] = (0x10 | TableMesureGrandeursZPHI1[M200k][MPHI]>>8);
-    assembling_buffer[19] = tab[10];
+        // measures
+        assembling_buffer[1] = (0x00 | TableMesureGrandeursZPHI1[M5k][MZ]>>8);
+        assembling_buffer[2] = TableMesureGrandeursZPHI1[M5k][MZ];
+        assembling_buffer[3] = (0x10 | TableMesureGrandeursZPHI1[M5k][MPHI]>>8);
+        assembling_buffer[4] = TableMesureGrandeursZPHI1[M5k][MPHI];
+
+        assembling_buffer[5] = (0x00 | TableMesureGrandeursZPHI1[M20k][MZ]>>8);
+        assembling_buffer[6] = TableMesureGrandeursZPHI1[M20k][MZ];
+        assembling_buffer[7] = (0x10 | TableMesureGrandeursZPHI1[M20k][MPHI]>>8);
+        assembling_buffer[8] = TableMesureGrandeursZPHI1[M20k][MPHI];
+
+        assembling_buffer[9] = (0x00 | TableMesureGrandeursZPHI1[M50k][MZ]>>8);
+        assembling_buffer[10] = TableMesureGrandeursZPHI1[M50k][MZ];
+        assembling_buffer[11] = (0x10 | TableMesureGrandeursZPHI1[M50k][MPHI]>>8);
+        assembling_buffer[12] = TableMesureGrandeursZPHI1[M50k][MPHI];
+
+        assembling_buffer[13] = (0x00 | TableMesureGrandeursZPHI1[M100k][MZ]>>8);
+        assembling_buffer[14] = TableMesureGrandeursZPHI1[M100k][MZ];
+        assembling_buffer[15] = (0x10 | TableMesureGrandeursZPHI1[M100k][MPHI]>>8);
+        assembling_buffer[16] = TableMesureGrandeursZPHI1[M100k][MPHI];
+
+        assembling_buffer[17] = (0x00 | TableMesureGrandeursZPHI1[M200k][MZ]>>8);
+        assembling_buffer[18] = TableMesureGrandeursZPHI1[M200k][MZ];
+        assembling_buffer[19] = (0x10 | TableMesureGrandeursZPHI1[M200k][MPHI]>>8);
+        assembling_buffer[20] = TableMesureGrandeursZPHI1[M200k][MPHI];
 
     payloadSize = 21;
     messageRemainingTosend_buffer[1] = payloadSize;
     
     // add encryption
     ENCRYPT_encryptBuffer(assembling_buffer, payloadSize, transferCryptKey);    // just crypt the payload
-    PRINT(rs_ctx,"assembling_buffer:\n");
-        show_data(assembling_buffer);
+
     // add jamming
     JAM_jamBuffer(assembling_buffer, payloadSize, &messageRemainingTosend_buffer[BIOMSGM_HEADER_SIZE], jamSequence);       // 4 correct bytes before a noise etc..., set the jamm payload with header in seding_buffer
     jammingSize = payloadSize/jamSequence;
@@ -350,9 +343,6 @@ int BIOMSGM_manageMeasuresRequest(uint8_t *message, uint8_t messageLength){
     calculatedCrc = CRC16_calculateCrc16Xmodem(messageRemainingTosend_buffer, totalSize);
     messageRemainingTosend_buffer[totalSize] = calculatedCrc >> 8;
     messageRemainingTosend_buffer[totalSize+1] = calculatedCrc;
-
-    PRINT(rs_ctx,"messageRemainingTosend_buffer:\n");
-    show_data(messageRemainingTosend_buffer);
 
     return BIOMSGM_sendMessage(messageRemainingTosend_buffer, totalSize + BIOMSGM_FOOTER_SIZE);
 }
@@ -490,15 +480,12 @@ int BIOMSGM_sendStatusResponse(uint8_t error){
 }
 
 int BIOMSGM_verifyCrc16(uint8_t *message, uint8_t messageLength){
-	PRINT(rs_ctx,"enter Verif Crc16 \n");
     // calculate the crc of the message
     uint16_t calculatedCrc = CRC16_calculateCrc16Xmodem(message, messageLength-BIOMSGM_FOOTER_SIZE);
     
     // verify the CRC16
     if(calculatedCrc != (GET_CRC16_REQUEST(message, messageLength-BIOMSGM_FOOTER_SIZE))){
-    	PRINT(rs_ctx,"Crc: %d \n",calculatedCrc );
-    	PRINT(rs_ctx,"Crc ref : %d \n",(GET_CRC16_REQUEST(message, messageLength-BIOMSGM_FOOTER_SIZE)) );
-        return STATUS_SUCCESS;} //BIOSTATUS_CRC_ERROR;}
+       return STATUS_SUCCESS;} //BIOSTATUS_CRC_ERROR;}
     
     return STATUS_SUCCESS;
 }
@@ -511,36 +498,26 @@ int BIOMSGM_isValidBiodyMessage(uint8_t *message, uint8_t messageLength){
     uint8_t lengthExpected, res;
     uint8_t jammingSize = 0;
 
-	PRINT(rs_ctx," message: ");
-	show_data(message);
     // check the message length
     if(messageLength < 4){
-    	PRINT(rs_ctx," messageLength < 4\n");
-    	PRINT(rs_ctx," messageLength: %d\n",messageLength);
         return BIOSTATUS_FRAME_ERROR;}
 
     // check the header > 0x61 <0x7A ('a' -> 'z')
     if(message[0] < 0x61 && message[0] > 0x7A){
-    	PRINT(rs_ctx,"message[0] < 0x61 && message[0] > 0x7A \n");
         return BIOSTATUS_FRAME_ERROR;}
     
     // if cmd 'a' skip the jamming size
     if(message[0] != BIOCMD_ASSOCIATION_REQ){
         // check the length {
-    	PRINT(rs_ctx,"message[0] != BIOCMD_ASSOCIATION_REQ \n");
         jammingSize = GET_PAYLOAD_SIZE_REQUEST(message)/jamSequence;
     }
     lengthExpected = GET_PAYLOAD_SIZE_REQUEST(message) + BIOMSGM_HEADER_AND_FOOTER_SIZE + jammingSize;
     if(lengthExpected != messageLength){
-    	PRINT(rs_ctx,"length: %d\n",lengthExpected );
-    	PRINT(rs_ctx,"message length: %d\n",messageLength );
         return BIOSTATUS_FRAME_ERROR;}
     
     // check the crc
     res = BIOMSGM_verifyCrc16(message, messageLength);
-    PRINT(rs_ctx,"res sortant de verif Crc16: %d \n",res );
     if(res != STATUS_SUCCESS){
-    	PRINT(rs_ctx,"la 2\n");
     	return BIOSTATUS_CRC_ERROR;}
     
     return STATUS_SUCCESS;    

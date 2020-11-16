@@ -32,16 +32,15 @@
 unsigned char NiveauVBAT; //V0.8
 unsigned char RepriseMesure; //V0.8
 unsigned char ReglageParTesteur;
-unsigned int Valim2;
+uint16_t Valim2;
 unsigned char FinInitBT ; 
 unsigned char Role;
-unsigned int BufferTempsLED1,BufferTempsLED2,BufferTempsLED3;
 unsigned char Retour;
 unsigned char NBupdate;
 
 
  //pour mesures segmentaires : enum {SEGMENTBD = 0,SEGMENTBG,SEGMENTJD,SEGMENTJG,SEGMENTDIAGD,SEGMENTDIAGG,SEGMENTTRONC};
-int TableMesureGrandeursSegment3FreqZ[DERNIERSEGMENT+1][3]; // Segment/(Z5 Z50 Z200kHZ)  :calculés en Ohm  pour 7 segments pour 3 frequences
+int16_t TableMesureGrandeursSegment3FreqZ[DERNIERSEGMENT+1][3]; // Segment/(Z5 Z50 Z200kHZ)  :calculés en Ohm  pour 7 segments pour 3 frequences
 /*
 avec :
 #define BRASetJAMBEDROITetTRONC 0 // M1 total voie 1

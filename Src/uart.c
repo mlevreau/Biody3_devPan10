@@ -123,7 +123,6 @@ struct uart_ctx* uart_init(UART_HandleTypeDef *huart, uint32_t rx_size, uint32_t
 	context->console_ptr = 0;
 	context->console_str = malloc(CONSOLE_CMD_LENGTH);
 
-    NbCarReception1 = 0;
 
 	HAL_UART_Receive_IT(huart,&context->RxChar,1);
 
