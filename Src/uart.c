@@ -25,6 +25,7 @@
 #include "ble_message_manager.h"
 #include "global_buffer.h"
 #include "spp_over_ble.h"
+#include "global.h"
 
 
 struct uart_ctx *rs_ctx;
@@ -337,6 +338,7 @@ static void console_process_string(void* context) {
     	TableMesureGrandeursZPHI1[M50k][MPHI] = 71;
     	TableMesureGrandeursZPHI1[M100k][MPHI] = 81;
     	TableMesureGrandeursZPHI1[M200k][MPHI] = 57;
+    	NiveauVBAT = 3;
 
     	while (uart_rx_received(ble_ctx)>0) uart_get_char(ble_ctx);
 
