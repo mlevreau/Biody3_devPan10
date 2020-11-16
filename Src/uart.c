@@ -77,7 +77,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (ctx) {
 	  if (ctx->RxFull==0) {
 		ctx->rx_buffer[ctx->RxHead] = ctx->RxChar;        //get received character
-		if(ctx==ble_ctx) PRINT(rs_ctx,">0x%x\n", ctx->RxChar);
+		if(ctx==ble_ctx)
+		{
+		//	PRINT(rs_ctx,">0x%x\n", ctx->RxChar);
+		}
 		HAL_UART_Receive_IT(huart,&ctx->RxChar,1);      //prepare for next reception
 
 		ctx->RxHead++;
@@ -271,7 +274,7 @@ uint8_t UART_retrieveBytes(uint8_t *bfr,int length, int duration1ms){
 	   }
     ret = STATUS_SUCCESS;
   } else {
-	  PRINT(rs_ctx,"exp:%d rec:%d\n",uart_rx_received(ble_ctx),length);
+	  PRINT(rs_ctx,"rec:%d exp:%d\n",uart_rx_received(ble_ctx),length);
 	ret = STATUS_TIMEOUT;
   }
   PRINT(rs_ctx,"(UART_retrieveBytes)ret = %s\n",(ret==0)?"SUCCESS":"ERROR");
@@ -296,7 +299,7 @@ void show_version(){
   PRINT(rs_ctx,"~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
-    // Modifiï¿½ par Marilys L
+    // Modifié par Marilys L
 static void console_process_string(void* context) {
   struct uart_ctx *ctx = context;
   int res;
@@ -319,6 +322,11 @@ static void console_process_string(void* context) {
       }
     }else if (strncmp(ctx->console_str,"transfer",3)==0){
 
+  	    HAL_GPIO_WritePin(BLE_RST_GPIO_Port,BLE_RST_Pin,0);
+        delay_ms(1000); //leave time for PAN1026 to wake up
+  	    HAL_GPIO_WritePin(BLE_RST_GPIO_Port,BLE_RST_Pin,1);
+        delay_ms(1000); //leave time for PAN1026 to wake up
+
     	TableMesureGrandeursZPHI1[M5k][MZ] = 675;
     	TableMesureGrandeursZPHI1[M20k][MZ] = 660;
     	TableMesureGrandeursZPHI1[M50k][MZ] = 608;
@@ -332,6 +340,7 @@ static void console_process_string(void* context) {
     	TableMesureGrandeursZPHI1[M200k][MPHI] = 57;
 
     	while (uart_rx_received(ble_ctx)>0) uart_get_char(ble_ctx);
+
     	res = SPPOBLE_manageProfile();
     	PRINT(ctx,"SPPOBLE_manageProfile: %s\n",(res==0)?"SUCCESS":"ERROR");
 
