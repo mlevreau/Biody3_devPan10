@@ -118,7 +118,9 @@ int SPPOBLE_handleState(enum communicationState newState){
         // send a timeout reached status to the device
         SPPOBLE_manageCommunicationError(BIOSTATUS_TIMEOUT_REACHED_ERROR);
         // wait for msg to be sent before returning
-        while(UART_isDataToSendWaiting());
+        while(UART_isDataToSendWaiting()){
+        	uart_service_ms();
+        }
     }
 	if (res)
 		return STATUS_ERROR;		
@@ -193,10 +195,10 @@ void SPPOBLE_updateProfileData(void){
 int SPPOBLE_waitForConnection(uint8_t timeout){
     int res;
     
-    unsigned int volatile TimeOUT2 = 0;
+  //  unsigned int volatile TimeOUT2 = 0;
 
     // convert timeout in ms for the comparaison
-    while(TimeOUT2*10 < timeout*1000){
+    while(timer.ppms < timeout*1000*UART_MS_TIME_RATIO){
         // check if data available !
         res = UART_checkDataAvailable(200);
        // PRINT(rs_ctx,"(waitConnection)UART_checkDataAvailable: %s\n",(res==0)?"SUCCESS":"ERROR");
@@ -217,10 +219,10 @@ int SPPOBLE_waitForConnection(uint8_t timeout){
 int SPPOBLE_waitForExchange(uint8_t timeout){
     int res;
     
-    unsigned int volatile TimeOUT2 = 0;
+    //unsigned int volatile TimeOUT2 = 0;
     
     // convert timeout in ms for the comparaison
-    while(TimeOUT2*10 < timeout*1000){
+    while(timer.ppms < timeout*1000*UART_MS_TIME_RATIO){
         // check if data available !
         res = UART_checkDataAvailable(200);                 
         if(res == STATUS_SUCCESS){
@@ -239,9 +241,9 @@ int SPPOBLE_waitForExchange(uint8_t timeout){
 int SPPOBLE_manageExchanges(uint8_t timeout){
     
     int res;
-    unsigned int volatile TimeOUT2 = 0;
+   // unsigned int volatile TimeOUT2 = 0;
     // convert timeout in ms for the comparaison
-    while(TimeOUT2*10 < timeout*1000){
+    while(timer.ppms < timeout*1000*UART_MS_TIME_RATIO){
 
         // check if data available !
         res = UART_checkDataAvailable(100);

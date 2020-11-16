@@ -16,12 +16,15 @@
 #define TRANSMIT_SIZE    256
 #define BLE_BUFFER_SIZE 1024
 
+// multiplicateur par rapport au vrai nb de ms
+// timer.ppmm = nb_ms* UART_MS_TIME_RATIO
+#define UART_MS_TIME_RATIO 30
+
 #define PRINT(ctx, ... )					\
 do { char msg [300]; 					\
      sprintf( msg,  __VA_ARGS__ );		\
      uart_put_string(ctx,msg);     		\
  } while (0);
-
 
 
 struct uart_ctx* uart_init(UART_HandleTypeDef *huart, uint32_t rx_size, uint32_t tx_size);

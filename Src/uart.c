@@ -257,7 +257,7 @@ uint8_t uart_get_buffer(void* context,char *bfr,int length, char checksum,int du
 //specific for BLE
 uint8_t UART_retrieveBytes(uint8_t *bfr,int length, int duration1ms){
   uint8_t ret = STATUS_ERROR;
-  int ppmm = timer.ppms+duration1ms*10;
+  int ppmm = timer.ppms+duration1ms*UART_MS_TIME_RATIO;
   uart_service_ms();
   while ((uart_rx_received(ble_ctx)<length) && (timer.ppms<ppmm)) {
 	uart_service_ms();
@@ -296,7 +296,7 @@ void show_version(){
   PRINT(rs_ctx,"~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
-    // Modifié par Marilys L
+    // Modifiï¿½ par Marilys L
 static void console_process_string(void* context) {
   struct uart_ctx *ctx = context;
   int res;
