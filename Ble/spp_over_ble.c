@@ -133,7 +133,6 @@ int SPPOBLE_initProfile(void){
     int res;
     
     res = COM_initHci();
-	PRINT(rs_ctx,"(initProfile) COM_initHci: %s\n",(res==0)?"SUCCESS":"ERROR");
 	if(res != STATUS_SUCCESS)
 		return res;
     
@@ -160,7 +159,6 @@ int SPPOBLE_createProfile(void){
     int res;
             
     res = SPPOBLE_handleState(COM_PROFILE_INIT);
-	PRINT(rs_ctx,"SPPOBLE_handleState: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS){
         return res;
     }
@@ -201,7 +199,6 @@ int SPPOBLE_waitForConnection(uint8_t timeout){
     while(timer.ppms < timeout*1000*UART_MS_TIME_RATIO){
         // check if data available !
         res = UART_checkDataAvailable(200);
-       // PRINT(rs_ctx,"(waitConnection)UART_checkDataAvailable: %s\n",(res==0)?"SUCCESS":"ERROR");
         // if data available, test if it's a connection request !!
         if(res == STATUS_SUCCESS){
             res = BLEMSM_handleBleMessage();
@@ -247,14 +244,11 @@ int SPPOBLE_manageExchanges(uint8_t timeout){
 
         // check if data available !
         res = UART_checkDataAvailable(100);
-        PRINT(rs_ctx,"(manageExchanges)UART_checkDataAvailable: %s\n",(res==0)?"SUCCESS":"ERROR");
         // If end of exchanges, 
         if(BIOMSGM_END_OF_EXCHANGES){
-            PRINT(rs_ctx,"(manageExchanges)BIOMSGM_END_OF_EXCHANGES\n");
             return STATUS_SUCCESS;
         }
         if(res == STATUS_SUCCESS){
-            PRINT(rs_ctx,"(manageExchanges)res == STATUS_SUCCESS\n");
             res = BLEMSM_handleBleMessage();
             PRINT(rs_ctx,"(manageExchanges)BLEMSM_handleBleMessage: %s\n",(res==0)?"SUCCESS":"ERROR");
             if(res != STATUS_SUCCESS){
@@ -264,22 +258,17 @@ int SPPOBLE_manageExchanges(uint8_t timeout){
         }   
         // manage the messages
         else if(res == STATUS_TIMEOUT){
-            PRINT(rs_ctx,"(manageExchanges)If TIMEOUT\n");
             // manage the previous message packets if needed
            if(BLEMSM_previousMessagePacketToSend){
-                PRINT(rs_ctx,"(manageExchanges)BLEMSM_previousMessagePacketToSend\n");
                 res = SPPOBLE_managePreviousMessagePacketToSend(messageRemainingTosend_buffer, BLEMSM_previousMessagePacketToSendLength);
             }
             // or manage a received message 
             else if (BLEMSM_messageReceived){
-                PRINT(rs_ctx,"(manageExchanges)BLEMSM_messageReceived\n");
 
-        	PRINT(rs_ctx,"BLEMSM_messageReceivedLength: %d\n",BLEMSM_messageReceivedLength);
                 res = SPPOBLE_manageMessage(messageReceived_buffer, BLEMSM_messageReceivedLength);
 
                 // Manage all errors cases
                 if (res != STATUS_SUCCESS){
-                    PRINT(rs_ctx,"(manageExchanges)res != STATUS_SUCCESS\n");
                     SPPOBLE_manageCommunicationError(res);
                 }
             }
@@ -294,7 +283,6 @@ int SPPOBLE_manageMessage(uint8_t *message, uint8_t messageLength){
     BLEMSM_messageReceived = 0;
     BLEMSM_messageReceivedLength = 0;
 
-	PRINT(rs_ctx,"messageLength: %d\n",messageLength);
     return BIOMSGM_manageMessage(message, messageLength);
     
 }

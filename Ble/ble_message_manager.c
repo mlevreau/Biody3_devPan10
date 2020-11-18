@@ -30,13 +30,11 @@ int BLEMSM_handleBleMessage(void){
     
     // retrieve the message via TCU protocol
     res = TCU_receiveResponse(reception_buffer, 0);
-    PRINT(rs_ctx,"(handleMessage)TCU_receiveResponse: %s\n",(res==0)?"SUCCESS":"ERROR");
     if(res != STATUS_SUCCESS)
         return res;
     
     // get service id
     serviceId = GET_SERVICE_ID;
-   // PRINT(rs_ctx,"serviceId: %d\n",serviceId);
     
     // switch for service id
     switch (serviceId) {

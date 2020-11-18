@@ -39,8 +39,6 @@ int HCI_receiveResponse(uint8_t *buf, uint8_t length_expected){
 	if(length_expected){
 
 		if (length_expected != 3+command_length){
-			PRINT(rs_ctx,"length_expected error\n");
-			PRINT(rs_ctx,"length_expected = %d et 3+command_length = %d\n", length_expected, 3+command_length);
 			return STATUS_ERROR;
 		}
 	}

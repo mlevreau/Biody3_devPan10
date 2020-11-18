@@ -33,7 +33,6 @@ struct uart_ctx *ble_ctx;
 
 #define CONSOLE_CMD_LENGTH   256
 #define MAX_SERVICE_LOOP 256
-#define NB_DATA 7
 
 uint8_t  spl_requested = 0x0;
 uint32_t ByteReceived = 0;
@@ -48,23 +47,6 @@ static void uart_process_char(void* context);
 uint8_t *message;
 uint8_t messageLength;
 
-void init_data(uint8_t tableau[]){
-	tableau[0] = 55;
-	tableau[1] = 50;
-	tableau[2] = 60;
-	tableau[3] = 56;
-	tableau[4] = 65;
-	tableau[5] = 6;
-	tableau[6] = 60;
-}
-
-void show_data(uint8_t tableau[]){
-	int i;
-	for( i=0; i<20; i++){
-		 PRINT(rs_ctx,"%d,",tableau[i]);
-	}
-	 PRINT(rs_ctx,"\n");
-}
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
    ByteReceived++;
@@ -274,10 +256,8 @@ uint8_t UART_retrieveBytes(uint8_t *bfr,int length, int duration1ms){
 	   }
     ret = STATUS_SUCCESS;
   } else {
-	  PRINT(rs_ctx,"rec:%d exp:%d\n",uart_rx_received(ble_ctx),length);
 	ret = STATUS_TIMEOUT;
   }
-  PRINT(rs_ctx,"(UART_retrieveBytes)ret = %s\n",(ret==0)?"SUCCESS":"ERROR");
    return ret;
 }
 
@@ -286,7 +266,6 @@ uint8_t UART_sendBytes(uint8_t *bfr,int length) {
   while (loop++ < length) {
 	  while (uart_tx_full(ble_ctx));
      uart_put_char(ble_ctx,*(bfr++));
-     //PRINT(rs_ctx, "<0x%x\n",*(bfr++));
   }
   while (uart_tx_pending(ble_ctx)) uart_service_ms();
   return STATUS_SUCCESS;
@@ -308,7 +287,7 @@ void BLE_moduleReset() {
 
 
 
-    // Modifiï¿½ par Marilys L
+    // Modifié par Marilys L
 static void console_process_string(void* context) {
   struct uart_ctx *ctx = context;
   int res;
