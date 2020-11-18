@@ -30,7 +30,8 @@
  *  -u _printf_float -u _scanf_float
  */
 #include "uart.h"
-
+#include "const.h"
+#include "global.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

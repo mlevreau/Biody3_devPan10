@@ -105,8 +105,7 @@ int BLEMSM_manageLeConnectionCompleteEvent(void){
     BLEMSM_deviceId[3] = reception_buffer[14];
     BLEMSM_deviceId[4] = reception_buffer[13];
     BLEMSM_deviceId[5] = reception_buffer[12];
-    
-    show_data(BLEMSM_deviceId);
+
 
     if(TCU_STATUS_ERROR)
         return STATUS_ERROR;

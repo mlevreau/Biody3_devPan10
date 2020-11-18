@@ -291,7 +291,6 @@ void BLE_moduleReset() {
 static void console_process_string(void* context) {
   struct uart_ctx *ctx = context;
   int res;
-  uint8_t tab[NB_DATA];
 
   if (ctx==rs_ctx) {
     if (strncmp(ctx->console_str,"help",4)==0) {
