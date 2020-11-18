@@ -110,6 +110,8 @@ int main(void)
   ble_ctx  = uart_init(&BLE_uart,BLE_BUFFER_SIZE,BLE_BUFFER_SIZE);
 
   show_version();
+  Sample_dataInit();
+
 
 
   /* USER CODE END 2 */
@@ -203,6 +205,20 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void Sample_dataInit() {
+	TableMesureGrandeursZPHI1[M5k][MZ] = 675;
+	TableMesureGrandeursZPHI1[M20k][MZ] = 660;
+	TableMesureGrandeursZPHI1[M50k][MZ] = 608;
+	TableMesureGrandeursZPHI1[M100k][MZ] = 560;
+	TableMesureGrandeursZPHI1[M200k][MZ] = 0x023A;
+	TableMesureGrandeursZPHI1[M5k][MPHI] = 59;
+	TableMesureGrandeursZPHI1[M20k][MPHI] = 65;
+	TableMesureGrandeursZPHI1[M50k][MPHI] = 71;
+	TableMesureGrandeursZPHI1[M100k][MPHI] = 81;
+	TableMesureGrandeursZPHI1[M200k][MPHI] = 57;
+	NiveauVBAT = 3;
+}
 
 /* USER CODE END 4 */
 

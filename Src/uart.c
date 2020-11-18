@@ -299,7 +299,16 @@ void show_version(){
   PRINT(rs_ctx,"~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 }
 
-    // Modifié par Marilys L
+void BLE_moduleReset() {
+	HAL_GPIO_WritePin(BLE_RST_GPIO_Port, BLE_RST_Pin, 0);
+	delay_ms(1000); //leave time for PAN1026 to wake up
+	HAL_GPIO_WritePin(BLE_RST_GPIO_Port, BLE_RST_Pin, 1);
+	delay_ms(1000); //leave time for PAN1026 to wake up
+}
+
+
+
+    // Modifiï¿½ par Marilys L
 static void console_process_string(void* context) {
   struct uart_ctx *ctx = context;
   int res;
@@ -322,34 +331,15 @@ static void console_process_string(void* context) {
       }
     }else if (strncmp(ctx->console_str,"transfer",3)==0){
 
-  	    HAL_GPIO_WritePin(BLE_RST_GPIO_Port,BLE_RST_Pin,0);
-        delay_ms(1000); //leave time for PAN1026 to wake up
-  	    HAL_GPIO_WritePin(BLE_RST_GPIO_Port,BLE_RST_Pin,1);
-        delay_ms(1000); //leave time for PAN1026 to wake up
-
-    	TableMesureGrandeursZPHI1[M5k][MZ] = 675;
-    	TableMesureGrandeursZPHI1[M20k][MZ] = 660;
-    	TableMesureGrandeursZPHI1[M50k][MZ] = 608;
-    	TableMesureGrandeursZPHI1[M100k][MZ] = 560;
-    	TableMesureGrandeursZPHI1[M200k][MZ] = 0x023A;
-
-    	TableMesureGrandeursZPHI1[M5k][MPHI] = 59;
-    	TableMesureGrandeursZPHI1[M20k][MPHI] = 65;
-    	TableMesureGrandeursZPHI1[M50k][MPHI] = 71;
-    	TableMesureGrandeursZPHI1[M100k][MPHI] = 81;
-    	TableMesureGrandeursZPHI1[M200k][MPHI] = 57;
-    	NiveauVBAT = 3;
+   //TODO mettre implementations dans ble_main
+  	    BLE_moduleReset();
 
     	while (uart_rx_received(ble_ctx)>0) uart_get_char(ble_ctx);
 
     	res = SPPOBLE_manageProfile();
     	PRINT(ctx,"SPPOBLE_manageProfile: %s\n",(res==0)?"SUCCESS":"ERROR");
 
-    } else if (strncmp(ctx->console_str,"data",3)==0){
-    	init_data(tab);
-        PRINT(rs_ctx,"tab :");
-    	show_data(tab);
-    } else {
+    }else {
   	  PRINT(ctx,"Unknown command (%s)...\n",ctx->console_str);
     }
   } else if (ctx==ble_ctx) {
