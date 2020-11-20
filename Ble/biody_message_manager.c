@@ -531,9 +531,9 @@ void BIOMSGM_saveExchangeKey(uint8_t *key){
 
 void BIOMSGM_loadPreviousExchangeKey(uint8_t *destKey){
     
-   // uint8_t i;
-    //for(i=0; i<EXCHANGE_KEY_MEM_SIZE; i++)
-        //destKey[i] = Read_b_eep(EXCHANGE_KEY_MEM_ADDRESS + i);
+    uint8_t i;
+    for(i=0; i<EXCHANGE_KEY_MEM_SIZE; i++)
+        destKey[i] = DEFAULT_MASTER_CRYPT_KEY[i];
 }
 
 void BIOMSGM_createTransferCryptKey(uint8_t *na, uint8_t *nb, uint8_t *destKey){
@@ -564,7 +564,7 @@ void BIOMSGM_saveMasterKey(uint8_t *key){
     //uint8_t i;
     // store the master key
     //for (i = 0; i < MASTER_KEY_MEM_SIZE; i++)
-        //Write_b_eep(MASTER_KEY_MEM_ADDRESS + i, key[i]);
+       // Write_b_eep(MASTER_KEY_MEM_ADDRESS + i, key[i]);
 }
 
 void BIOMSGM_manageMasterKey(void){
@@ -585,3 +585,4 @@ void BIOMSGM_manageMasterKey(void){
         }           
     }
 }
+

@@ -44,8 +44,7 @@ uint8_t uart_get_buffer(void* context,char *bfr,int length, char checksum,int du
 uint8_t UART_retrieveBytes(uint8_t *bfr,int length, int duration1ms);
 uint8_t UART_sendBytes(uint8_t *bfr,int length);
 void show_version();
-void show_data(uint8_t tab[]);
-void init_data(uint8_t tab[]);
+void Sample_dataInit();
 unsigned char TransfertMesure(void);
 void uart_service(void);
 void uart_service_ms(void);

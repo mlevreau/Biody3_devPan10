@@ -146,7 +146,7 @@ int BLEMSM_manageLeServiceGattServer(void){
             return BLEMSM_manageLeGattServerWriteCharValueEvent();
         case TCU_LE_GATT_SER_READ_CHAR_VAL_EVENT:
         	PRINT(rs_ctx,"TCU_LE_GATT_SER_READ_CHAR_VAL_EVENT\n");
-            //return BLEMSM_manageLeGattServerReadCharValueEvent();
+          //  return BLEMSM_manageLeGattServerReadCharValueEvent();
         case TCU_LE_GATT_SDB_UPD_CHAR_ELE_RESP:
         	PRINT(rs_ctx,"TCU_LE_GATT_SDB_UPD_CHAR_ELE_RESP\n");
         	return BLEMSM_manageLeGattSdbUpdateCharEleResponse();
@@ -164,13 +164,13 @@ int BLEMSM_manageLeServiceGattServer(void){
         	return BLEMSM_manageLeGattServerWriteCharDespEvent();
         case TCU_LE_GATT_SER_EXG_MTU_EVENT:
         	PRINT(rs_ctx,"TCU_LE_GATT_SER_EXG_MTU_EVENT\n");
-           // return BLEMSM_manageLeGattServerExgMtuEvent();
+         //   return BLEMSM_manageLeGattServerExgMtuEvent();
         case TCU_LE_GATT_SER_READ_MULTIPLE_EVENT:   // to see if correct
         	PRINT(rs_ctx,"TCU_LE_GATT_SER_READ_MULTIPLE_EVENT\n");
-           // return BLEMSM_manageLeGattServerReadMultipleEvent();
+         //   return BLEMSM_manageLeGattServerReadMultipleEvent();
         case TCU_LE_GATT_SER_READ_CHAR_DESP_EVENT:
         	PRINT(rs_ctx,"TCU_LE_GATT_SER_READ_CHAR_DESP_EVENT\n");
-           // return BLEMSM_manageLeGattServerReadCharDespEvent();
+          // return BLEMSM_manageLeGattServerReadCharDespEvent();
         default:
             return STATUS_SUCCESS;       
     }
@@ -206,7 +206,6 @@ int BLEMSM_manageLeGattServerWriteCharValueEvent(void){
 }
 
 /*
-
 int BLEMSM_manageLeGattServerReadCharValueEvent(void){
     
     uint8_t res, attributeLength;
@@ -268,6 +267,7 @@ int BLEMSM_manageLeGattServerReadCharValueEvent(void){
     return TCU_sendResponse(sending_buffer, assembling_buffer, 5, TCU_LE_SERVICE_GATT_SRV, TCU_LE_GATT_SER_READ_CHAR_VAL_ACCEPT_REQ);
 }
 */
+
 int BLEMSM_manageLeGattSdbUpdateCharEleResponse(void){
     
     // just check the status
@@ -308,7 +308,9 @@ int BLEMSM_manageLeGattServerWriteCharDespEvent(void){
     
     return TCU_sendResponse(sending_buffer, assembling_buffer, 5, TCU_LE_SERVICE_GATT_SRV, TCU_LE_GATT_SER_WRITE_CHAR_DESP_ACCEPT_REQ);
 }
+
 /*
+
 int BLEMSM_manageLeGattServerExgMtuEvent(void){
     
     // get server rx mtu size
@@ -348,7 +350,7 @@ int BLEMSM_manageLeGattServerReadCharDespEvent(void){
     switch(characHandle){
         case 0x0212:
             attributeLength = 0x02;
-            attributeArray = &TCU_LE_GATT_SDB_ADD_CHAR_ELE_REQ6[14];
+            attributeArray = &TCU_LE_GATT_SDB_ADD_CHAR_ELE_REQ6[SYSTEM_ID_CHAR_DATA_START_INDEX];
             break;
         default:
             attributeLength = 0;
